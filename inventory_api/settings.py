@@ -38,6 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'core',
+    # rest apps and auth
+    'djoser',
+    'rest_framework',
+    'rest_framework.authtoken',
     
 ]
 
