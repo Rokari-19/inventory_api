@@ -44,8 +44,10 @@ INSTALLED_APPS = [
     'djoser',
     'rest_framework',
     'rest_framework.authtoken',
-    'corsheaders'
+    'corsheaders',
     
+    # swagger
+    'drf_yasg'
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
