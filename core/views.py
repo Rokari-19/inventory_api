@@ -52,7 +52,7 @@ class AddSupplier(APIView):
 class ItemDetail(APIView):
     def get_object(self, item_slug):
         try:
-            Item.objects.get(item_slug=item_slug)
+            return Item.objects.get(item_slug=item_slug)
         except Item.DoesNotExist:
             raise Http404
         
@@ -62,9 +62,37 @@ class ItemDetail(APIView):
         return Response(serializer.data, status.HTTP_200_OK)
     
     def put(self, request, item_slug, format=None):
-        serializer = ItemSerializer(data=request.data)
+        item = self.get_object(item_slug)
+        serializer = ItemSerializer(item, data=request.data)  
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status.HTTP_200_OK)
+            return Response(serializer.data, status.HTTP_202_ACCEPTED)
         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request, item_slug, format=None):
+        item = self.get_object(item_slug)
+        item.delete()
+        return Response(status.HTTP_204_NO_CONTENT)
+    
+    
+class SupplierInfo(APIView):
+    def get_object(self, supplier_slug):
+        try:
+            return Supplier.objects.get(supplier_slug=supplier_slug)
+        except Supplier.DoesNotExist:
+            raise Http404
         
+    def get(self, request, supplier_slug, format=None):
+        supplier = self.get_object(supplier_slug)
+        serializer = SupplierSerializer(supplier)
+        return Response(serializer.data, status.HTTP_200_OK)
+    
+    def put(self, request, supplier_slug, format=None):
+        supplier = self.get_object(supplier_slug)
+        serializer = SupplierSerializer(supplier, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status.HTTP_202_ACCEPTED)
+        return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+    
+    

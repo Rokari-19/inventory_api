@@ -13,14 +13,19 @@ class Supplier(models.Model):
     supplier_name = models.CharField(max_length=65, blank=False)
     supplier_email = models.EmailField(max_length=100, blank=False)
     supplier_phone = models.IntegerField()
-    supplier_slug = models.SlugField(editable=False, blank=True, null=True)
+    supplier_slug = models.SlugField(editable=False, blank=True, null=True, unique=True)
     
     def __str__(self) -> str:
         return self.supplier_name
-    
+        
     def get_absolute_url(self):
         self.supplier_slug = slugify(self.supplier_name)
         return f'/{self.supplier_slug}/'
+    
+    def save(self, *args, **kwargs):
+        if not self.supplier_slug:
+            self.supplier_slug = slugify(self.supplier_name)
+        super().save(*args, **kwargs)
 
 '''
 creating the item object 
@@ -32,7 +37,7 @@ class Item(models.Model):
     date_added = models.DateField(auto_now_add=True, blank=False, null=True, editable=False)
     quantity = models.IntegerField()
     supplier = models.ManyToManyField(Supplier, related_name='items')
-    item_slug = models.SlugField(editable=False, blank=True, null=True)
+    item_slug = models.SlugField(editable=False, blank=True, null=True, unique=True)
     
     
     def __str__(self) -> str:
@@ -42,5 +47,9 @@ class Item(models.Model):
         self.item_slug = slugify(self.name)
         return f'/{self.item_slug}/'
     
+    def save(self, *args, **kwargs):
+        if not self.item_slug:
+            self.item_slug = slugify(self.name)
+        super().save(*args, **kwargs)
     
        
